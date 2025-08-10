@@ -3,9 +3,9 @@ package ml.unbreakinggold.datapackinstaller.mixin.client;
 import ml.unbreakinggold.datapackinstaller.client.DatapackInstallerClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.CreateWorldCallback;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.world.GeneratorOptionsHolder;
-import net.minecraft.world.level.LevelInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -15,26 +15,30 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.nio.file.Path;
+import java.util.Optional;
+import java.util.OptionalLong;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class CreateWorldScreenMixin {
     @Unique
     private static final Logger LOGGER = LogManager.getLogger(CreateWorldScreenMixin.class);
 
+    @Shadow
+    @Nullable
+    private Path dataPackTempDir;
+
     /**
-     * Inject after CreateWorldScreen.create(...) finishes to replace the data pack directory with our persistent one.
+     * Inject after CreateWorldScreen.create(...), replaces the data pack directory with thr persistent one.
      */
     @Inject(
-            method = "create",
-            at = @At("RETURN")
+            method = "<init>",
+            at = @At("TAIL")
     )
-    private static void onCreateReturn(MinecraftClient client, Screen parent, LevelInfo levelInfo, GeneratorOptionsHolder generatorOptionsHolder, Path dataPackTempDir, CallbackInfoReturnable<CreateWorldScreen> cir) {
-        System.out.println("Running on Create Return");
-        CreateWorldScreen screen = cir.getReturnValue();
-        ((CreateWorldScreenAccessor) screen).setDataPackTempDir(DatapackInstallerClient.MAIN_PATH);
+    private void onInit(MinecraftClient client, Screen parent, GeneratorOptionsHolder generatorOptionsHolder, Optional defaultWorldType, OptionalLong seed, CreateWorldCallback callback, CallbackInfo ci) {
+        this.dataPackTempDir = DatapackInstallerClient.MAIN_PATH;
     }
 
     /**

@@ -7,7 +7,6 @@
     "MinecraftServerAccessor"
   ],
   "client": [
-    "client.CreateWorldScreenAccessor",
     "client.CreateWorldScreenMixin",
     "client.GameMenuScreenMixin"
   ],
