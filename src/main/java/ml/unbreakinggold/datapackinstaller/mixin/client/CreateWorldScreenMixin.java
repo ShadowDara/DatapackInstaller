@@ -16,21 +16,6 @@ import java.nio.file.Path;
 public abstract class CreateWorldScreenMixin {
     @Unique
     private static final Logger LOGGER = LogManager.getLogger(CreateWorldScreenMixin.class);
-    @Shadow
-    @Nullable
-    private Path dataPackTempDir;
-
-    /**
-     * @author Jomar Milan - July 31st, 2024 - Minecraft 1.20.5
-     * @reason Use persistent mod directory instead of vanilla temporary directory
-     */
-    @Overwrite
-    @Nullable
-    private Path getDataPackTempDir() {
-        this.dataPackTempDir = DatapackInstallerClient.MAIN_PATH;
-
-        return this.dataPackTempDir;
-    }
 
     /**
      * @author Jomar Milan - July 31st, 2024 - Minecraft 1.20.5
